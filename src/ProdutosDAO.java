@@ -98,5 +98,30 @@ public class ProdutosDAO {
         
         return produtos;
     }
+    
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+
+        ArrayList<ProdutosDTO> produtos = new ArrayList<>();
+        try{
+        
+            st = conn.prepareStatement("SELECT id, nome, valor, status from produtos where status = 'Vendido'");
+            rs = st.executeQuery();
+            
+            while (rs.next()){
+            
+                ProdutosDTO produto = new ProdutosDTO();
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
+                produtos.add(produto);
+            }
+        } catch(SQLException ex) {
+        
+            System.out.println("Erro ao listar filmes" + ex.getMessage());
+        }
+        
+        return produtos;
+    }
 
 }
