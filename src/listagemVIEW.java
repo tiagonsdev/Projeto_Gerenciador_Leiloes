@@ -1,5 +1,10 @@
 
 import java.awt.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -161,6 +166,63 @@ public class listagemVIEW extends javax.swing.JFrame {
         String id = id_produto_venda.getText();
 
         ProdutosDAO produtosdao = new ProdutosDAO();
+        
+        
+        String url = "jdbc:mysql://localhost:3306/vendas";
+        String user = "root";
+        String password = "tiago";
+        
+        try{
+        
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.out.println("Driver JDBC carregado");
+        }catch(ClassNotFoundException cnfe){
+        
+            System.out.println("Driver JDBC não encontrado : " + cnfe.getMessage());
+        }
+        
+        Connection con = null;
+        try{
+        
+            con = DriverManager.getConnection(url,user,password);
+            System.out.println("Conexão com o banco estabelecida");
+        }catch(SQLException sqle){
+        
+            System.out.println("Erro na conexão com o banco : " + sqle.getMessage());
+        }
+        
+        Statement stmt = null;
+        try{
+        
+            stmt = con.createStatement();
+            System.out.println("Pronto para execucao de comando sql");
+        }catch(SQLException sqle){
+        
+            System.out.println("Erro no acesso ao banco de dados : " + sqle.getMessage());
+        }
+        
+        PreparedStatement ps = null;
+        String sql3 = "update produtos set status = 'Vendido'  where id =?";
+        
+        try {
+            ps = con.prepareStatement(sql3);
+            ps.setString(1,id);
+            ps.executeUpdate();
+            
+            System.out.println( "Dados atualizados com sucesso." );
+        } catch ( SQLException sqle ) {
+            System.out.println( "Erro no acesso ao Bando de Dados : "+ sqle.getMessage());
+        }
+        
+        //Fechando conexão
+        
+        try{
+        
+            con.close();
+        }catch(SQLException sqle){
+        
+            System.out.println("Erro no fechamento da conexão");
+        }
 
         //produtosdao.venderProduto(Integer.parseInt(id));
         carregarTabela();
